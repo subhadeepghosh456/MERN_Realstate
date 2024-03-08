@@ -284,8 +284,6 @@ const CreateListing = () => {
               <input
                 type="number"
                 id="regularPrice"
-                min="0"
-                max="500"
                 required
                 className="p-3 border border-gray-400 rounded-lg"
                 onChange={handleChange}
@@ -293,7 +291,9 @@ const CreateListing = () => {
               />
               <div className="flex flex-col items-center">
                 <p>Regular price</p>
-                <span className="text-xs">($ / Month)</span>
+                {formData.type === "rent" && (
+                  <span className="text-xs">($ / Month)</span>
+                )}
               </div>
             </div>
             {formData.offer && (
@@ -301,8 +301,6 @@ const CreateListing = () => {
                 <input
                   type="number"
                   id="discountPrice"
-                  min="0"
-                  max="10"
                   required
                   className="p-3 border border-gray-400 rounded-lg"
                   onChange={handleChange}
@@ -310,7 +308,10 @@ const CreateListing = () => {
                 />
                 <div className="flex flex-col items-center">
                   <p>Discounted price</p>
-                  <span className="text-xs">($ / Month)</span>
+
+                  {formData.type === "rent" && (
+                    <span className="text-xs">($ / Month)</span>
+                  )}
                 </div>
               </div>
             )}
