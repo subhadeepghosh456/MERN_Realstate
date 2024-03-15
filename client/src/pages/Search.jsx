@@ -16,6 +16,7 @@ const Search = () => {
 
   const [loading, setLoading] = useState(false);
   const [listings, setListings] = useState([]);
+  const [showmore, setShowmore] = useState(false);
 
   const handleChange = (e) => {
     if (
@@ -99,16 +100,36 @@ const Search = () => {
 
     const fetchListings = async () => {
       setLoading(true);
+      setShowmore(false);
       const searchQuery = urlParams.toString();
       const res = await fetch(`/api/listing/get?${searchQuery}`);
       const data = await res.json();
-      console.log(data);
+      if (data.length > 8) {
+        setShowmore(true);
+      } else {
+        setShowmore(false);
+      }
+      // console.log(data);
       setListings(data);
       setLoading(false);
     };
 
     fetchListings();
   }, [location.search]);
+
+  const onShowMoreClick = async () => {
+    const numberOfListings = listings.length;
+    const startIndex = numberOfListings;
+    const urlParams = new URLSearchParams(location.search);
+    urlParams.set("startIndex", startIndex);
+    const searchQuery = urlParams.toString();
+    const res = await fetch(`/api/listing/get?${searchQuery}`);
+    const data = await res.json();
+    if (data.length < 9) {
+      setShowmore(false);
+    }
+    setListings([...listings, ...data]);
+  };
 
   console.log(listings);
 
@@ -214,11 +235,11 @@ const Search = () => {
           </button>
         </form>
       </div>
-      <div className=" flex-1">
+      <div className="flex-1 ">
         <h1 className="text-3xl font-semibold border-b p-3 text-slate-700 mt-5">
           Listing results:
         </h1>
-        <div className="p-7">
+        <div className="flex flex-wrap  gap-7 p-7">
           {!loading && listings.length === 0 && (
             <p className="text-xl text-slate-700">No listing found!</p>
           )}
@@ -232,6 +253,14 @@ const Search = () => {
             listings.map((listing) => (
               <ListingCard key={listing._id} listing={listing} />
             ))}
+          {showmore && (
+            <button
+              className="text-green-700 hover:underline p-7 text-center w-full"
+              onClick={onShowMoreClick}
+            >
+              Show more
+            </button>
+          )}
         </div>
       </div>
     </div>
